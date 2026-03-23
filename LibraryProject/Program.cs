@@ -5,7 +5,7 @@ internal class Program
     static void Main(string[] args) 
     {
         List<Student> students = initStudents();
-        List<Book> books = initBooks();
+        List<Book> books = readBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
         Random rnd = new Random();
         foreach (Student student in students) 
         {
@@ -21,6 +21,28 @@ internal class Program
                 Console.WriteLine("Der Schüler: "+student.name+" hat das Buch "+book.Name+" ausgeliehen");
             }
         }
+        writeBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv", books);
+    }
+    static List<Book> readBookCSV(string path) 
+    {
+        List<Book> result = new List<Book>();
+        var lines = File.ReadLines(path);
+        foreach (var line in lines) 
+        {
+            var values = line.Split(',');// evtl ;
+            Book temp = new Book(values[1], values[0], values[2]);
+            result.Add(temp);
+        }
+        return result;
+    }
+    static void writeBookCSV(string path,List<Book> books) 
+    {
+        var lines = new List<string>();
+        foreach (Book book in books) 
+        {
+            lines.Add($"{book.ISBN},{book.Name},{book.Title}");
+        }
+        File.WriteAllLines(path, lines);
     }
     static List<Student> initStudents() 
     {
