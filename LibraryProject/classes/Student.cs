@@ -25,26 +25,48 @@ namespace LibraryProject.classes
 
         public void BorrowBook(Book book, Library lib) 
         {
-            if (this.borrowedBooks.Count < 5 && this._isMember)
+            if (lib.BookAvailable(book))
             {
-                this.borrowedBooks.Add(book);
-                lib.AddBooksToEntries(this, new List<Book>() { book });
-                lib._booksInStore.Remove(book);
-            }
-            else if (this.borrowedBooks.Count < 1)
-            {
-                this.borrowedBooks.Add(book);
-                lib.AddBooksToEntries(this, new List<Book>() { book });
-                lib._booksInStore.Remove(book);
+                if (this.borrowedBooks.Count < 5 && this._isMember)
+                {
+                    this.borrowedBooks.Add(book);
+                    lib.AddBooksToEntries(this, new List<Book>() { book });
+                    lib._booksInStore.Remove(book);
+                    Console.WriteLine($"Der Schüler: {this.name} kann das Buch {book.Name} ausleihen und ist Mitglied 1");
+                }
+                else if (this.borrowedBooks.Count < 1)
+                {
+                    this.borrowedBooks.Add(book);
+                    lib.AddBooksToEntries(this, new List<Book>() { book });
+                    lib._booksInStore.Remove(book);
+                    Console.WriteLine($"Der Schüler: {this.name} kann das Buch {book.Name} ausleihen und ist kein Mitglied 2");
+                }
+                else
+                {
+                    Console.WriteLine($"Der Schüler: {this.name} kann das Buch {book.Name} nicht ausleihen, da er kein Mitglied ist 3");
+                }
             }
             else 
             {
-                Console.WriteLine($"Der Schüler: {this.name} kann das Buch {book.Name} nicht ausleihen");
+                if (lib.WaitingAvailable(book, this))
+                {
+                    Console.WriteLine($"Der Schüler: {this.name} kann das Buch {book.Name} nicht ausleihen und wird auf die Warteliste geschrieben 4");
+                    book.WaitingList.Add(this);
+                }
+                else 
+                {
+                    Console.WriteLine($"Der Schüler: {this.name} kann das Buch {book.Name} nicht ausleihen und steht bereits auf der Warteliste 5");
+                }
             }
         }
         public Book ReturnBook(Book book, Library lib) 
         {
             lib.RemoveBookFromStudent(this, book);
+            if (book.WaitingList.Count >= 1) 
+            {
+                Console.WriteLine($"Der Schüler: {book.WaitingList[0].name} leiht das Buch {book.Name} als nächstes aus 6");
+                book.WaitingList[0].BorrowBook(book, lib);
+            }
             return book;
         }
         public List<Book> ShowBooks() 

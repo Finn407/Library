@@ -11,12 +11,14 @@ namespace LibraryProject.classes
         public string ISBN;
         public string Title;
         public string Name;
+        public List<Student> WaitingList;
 
-        public Book(string ISBN, string Name,string Title) 
+        public Book(string ISBN, string Name,string Title,List<Student> waitingList) 
         {
             this.ISBN = ISBN;
             this.Name = Name;
             this.Title = Title;
+            this.WaitingList = waitingList;
         }
     }
 }

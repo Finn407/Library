@@ -41,5 +41,18 @@ namespace LibraryProject.classes
                 _booksInStore.Add(book);
             }
         }
+        public bool BookAvailable(Book book)
+        {
+            Book temp = _booksInStore.Where(x=> x.ISBN == book.ISBN).FirstOrDefault();
+            if (temp != null) return true;
+            else return false;
+        }
+        public bool WaitingAvailable(Book book,Student student) 
+        {
+            Student tempStudent = book.WaitingList.Where(x => x.id == student.id).FirstOrDefault();
+            if (tempStudent == null) return true;
+            else return false;
+                
+        }
     }
 }
