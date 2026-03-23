@@ -7,7 +7,6 @@ Harry Potter and the Half-Blood Prince,9780439785969,J.K. Rowling
 Harry Potter and the Deathly Hallows,9780545010221,J.K. Rowling
 The Hobbit,9780547928227,J.R.R. Tolkien
 The Fellowship of the Ring,9780547928210,J.R.R. Tolkien
-The Two Towers,9780547928203,J.R.R. Tolkien
 The Return of the King,9780547928197,J.R.R. Tolkien
 The Silmarillion,9780618391110,J.R.R. Tolkien
 1984,9780451524935,George Orwell
@@ -20,14 +19,11 @@ Pride and Prejudice,9780141439518,Jane Austen
 Sense and Sensibility,9780141439662,Jane Austen
 Emma,9780141439587,Jane Austen
 Mansfield Park,9780141439808,Jane Austen
-Northanger Abbey,9780141439792,Jane Austen
 Persuasion,9780141439686,Jane Austen
 The Shining,9780307743657,Stephen King
 It,9781501142970,Stephen King
-Misery,9781501143106,Stephen King
 Carrie,9780307743664,Stephen King
 The Stand,9780307743688,Stephen King
-Pet Sematary,9781501156700,Stephen King
 The Green Mile,9781501160448,Stephen King
 A Game of Thrones,9780553593716,George R.R. Martin
 A Clash of Kings,9780553579901,George R.R. Martin
@@ -39,7 +35,6 @@ Franny and Zooey,9780316769020,J.D. Salinger
 Nine Stories,9780316767729,J.D. Salinger
 The Great Gatsby,9780743273565,F. Scott Fitzgerald
 Tender Is the Night,9780684801544,F. Scott Fitzgerald
-This Side of Paradise,9780743273566,F. Scott Fitzgerald
 Moby Dick,9781503280786,Herman Melville
 Bartleby the Scrivener,9781503280787,Herman Melville
 Billy Budd,9781503280788,Herman Melville
@@ -50,16 +45,12 @@ A Farewell to Arms,9780684801469,Ernest Hemingway
 For Whom the Bell Tolls,9780684803357,Ernest Hemingway
 The Sun Also Rises,9780743297332,Ernest Hemingway
 The Alchemist,9780061122415,Paulo Coelho
-Brida,9780061578953,Paulo Coelho
 Veronika Decides to Die,9780061124266,Paulo Coelho
 Eleven Minutes,9780060589288,Paulo Coelho
-The Pilgrimage,9780061687457,Paulo Coelho
 The Da Vinci Code,9780307474278,Dan Brown
-Angels & Demons,9780743493468,Dan Brown
 Inferno,9781400079155,Dan Brown
 Digital Fortress,9780312263126,Dan Brown
 Deception Point,9780312944926,Dan Brown
-The Girl with the Dragon Tattoo,9780307454546,Stieg Larsson
 The Girl Who Played with Fire,9780307454553,Stieg Larsson
 The Girl Who Kicked the Hornet's Nest,9780307454560,Stieg Larsson
 The Hunger Games,9780439023528,Suzanne Collins
@@ -71,14 +62,10 @@ Paper Towns,9780142414934,John Green
 An Abundance of Katherines,9780142410707,John Green
 Twilight,9780316015844,Stephenie Meyer
 New Moon,9780316160193,Stephenie Meyer
-Eclipse,9780316160209,Stephenie Meyer
 Breaking Dawn,9780316067928,Stephenie Meyer
 The Chronicles of Narnia,9780066238500,C.S. Lewis
-Prince Caspian,9780064471053,C.S. Lewis
 The Voyage of the Dawn Treader,9780064471077,C.S. Lewis
-The Silver Chair,9780064471091,C.S. Lewis
 The Last Battle,9780064471107,C.S. Lewis
-The Crystal Maze,9780000000036,Ida Peters
 Ghost Protocol,9780000000037,Theo Lang
 Fire and Code,9780000000038,Helena Roth
 The Dark Web,9780000000039,Nico Sommer
@@ -87,15 +74,9 @@ The Last Guardian,9780000000041,Johanna Haas
 Frozen Time,9780000000042,Tobias Schuster
 The Infinite Key,9780000000043,Sarah Kern
 Shadows Rising,9780000000044,Jan Fuchs
-The Final System,9780000000045,Marlene Weiß
-Virtual Reality,9780000000046,Tom Schmitt
 The Red Signal,9780000000047,Alina Dietrich
 Echo Chamber,9780000000048,Erik Schmid
-Binary Dreams,9780000000049,Lina Conrad
-The Lost Data,9780000000050,Simon Werner
 Cyber Storm,9780000000051,Paula Voigt
-The Hidden Node,9780000000052,Robin Keller
-Silent Network,9780000000053,Julia Sauer
 The Black Code,9780000000054,Marvin Franke
 Digital Horizon,9780000000055,Lena Barth
 The Final Byte,9780000000056,Chris Ludwig
@@ -108,7 +89,6 @@ The Last Node,9780000000062,Vanessa Arndt
 Hidden System,9780000000063,Patrick Krüger
 The Infinite Loop 2,9780000000064,Laura Weiß
 Digital Storm,9780000000065,Daniel Bergmann
-Silent Protocol,9780000000066,Julia Klein
 The Red Code,9780000000067,Thomas Fuchs
 Ghost Network,9780000000068,Maria Lang
 Cyber Dreams,9780000000069,Stefan Peters
@@ -143,3 +123,23 @@ The Final Protocol,9780000000097,Simon Berg
 Hidden Horizon,9780000000098,Sarah Klein
 Dark Byte,9780000000099,Erik Otto
 The Last Code,9780000000100,Nina Busch
+Prince Caspian,9780064471053,C.S. Lewis
+Virtual Reality,9780000000046,Tom Schmitt
+Pet Sematary,9781501156700,Stephen King
+The Silver Chair,9780064471091,C.S. Lewis
+Brida,9780061578953,Paulo Coelho
+Misery,9781501143106,Stephen King
+The Hidden Node,9780000000052,Robin Keller
+The Final System,9780000000045,Marlene Weiß
+Eclipse,9780316160209,Stephenie Meyer
+Silent Network,9780000000053,Julia Sauer
+This Side of Paradise,9780743273566,F. Scott Fitzgerald
+The Lost Data,9780000000050,Simon Werner
+Silent Protocol,9780000000066,Julia Klein
+The Girl with the Dragon Tattoo,9780307454546,Stieg Larsson
+Northanger Abbey,9780141439792,Jane Austen
+The Pilgrimage,9780061687457,Paulo Coelho
+The Two Towers,9780547928203,J.R.R. Tolkien
+Binary Dreams,9780000000049,Lina Conrad
+Angels & Demons,9780743493468,Dan Brown
+The Crystal Maze,9780000000036,Ida Peters

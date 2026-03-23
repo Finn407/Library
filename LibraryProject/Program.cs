@@ -6,22 +6,31 @@ internal class Program
     {
         List<Student> students = initStudents();
         List<Book> books = readBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
+        Library lib = new Library(books,books,new List<ListEntry>());
         Random rnd = new Random();
         foreach (Student student in students) 
         {
             int counter = rnd.Next(1, 99);
-            student.BorrowBook(books[counter]);
-            
+            student.BorrowBook(books[counter],lib);
         }
         foreach (Student student in students)
         {
+            //Verteile Bücher
             List<Book> result = student.ShowBooks();
             foreach (Book book in result) 
             {
                 Console.WriteLine("Der Schüler: "+student.name+" hat das Buch "+book.Name+" ausgeliehen");
             }
         }
-        writeBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv", books);
+        foreach (Student student in students)
+        {
+            //Gebe Bücher zurück
+            foreach (Book book in student.borrowedBooks)
+            {
+                student.ReturnBook(book, lib);
+            }
+        }
+        writeBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv", lib._booksInStore);
     }
     static List<Book> readBookCSV(string path) 
     {
@@ -29,7 +38,7 @@ internal class Program
         var lines = File.ReadLines(path);
         foreach (var line in lines) 
         {
-            var values = line.Split(',');// evtl ;
+            var values = line.Split(',');
             Book temp = new Book(values[1], values[0], values[2]);
             result.Add(temp);
         }

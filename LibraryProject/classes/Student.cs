@@ -12,7 +12,7 @@ namespace LibraryProject.classes
         public string name;
         public DateOnly birthday;
         public List<Book> borrowedBooks;
-        private bool _isMember;
+        public bool _isMember;
 
         public Student(Guid id, string name, DateOnly birthday, List<Book> borrowedBooks, bool isMember)
         {
@@ -23,21 +23,26 @@ namespace LibraryProject.classes
             _isMember = isMember;
         }
 
-        public void BorrowBook(Book book) 
+        public void BorrowBook(Book book, Library lib) 
         {
-            if (this.borrowedBooks.Count < 5 && _isMember)
+            if (this.borrowedBooks.Count < 5 && this._isMember)
             {
                 this.borrowedBooks.Add(book);
+                lib.addBooksToEntries(this, new List<Book>() { book });
+                lib._booksInStore.Remove(book);
             }
-            else if (this.borrowedBooks.Count < 1) 
+            else if (this.borrowedBooks.Count < 1)
             {
                 this.borrowedBooks.Add(book);
+                lib.addBooksToEntries(this, new List<Book>() { book });
+                lib._booksInStore.Remove(book);
             }
         }
-        public void ReturnBook(Book book) 
+        public Book ReturnBook(Book book, Library lib) 
         {
-            if (this.borrowedBooks.Remove(book)) return;
-            else Console.WriteLine("Das Buch konnte nicht zurückgegeben werden");
+            lib.removeBookFromStudent(this, book);
+            //lib._booksInStore.Add(book);
+            return book;
         }
         public List<Book> ShowBooks() 
         {
