@@ -7,17 +7,137 @@ internal class Program
         List<Student> students = initStudents();
         List<Book> books = ReadBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
         List<Book> booksDupe = ReadBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
-        Library lib = new Library(books,booksDupe,new List<ListEntry>());
+        Library lib = new Library(books, booksDupe, new List<ListEntry>());
+
+        ConsoleKeyInfo key;
+
+        bool loginUser = false;
+        bool loginPW = false;
+        bool showBooks = false;
+        bool getBooks = false;
+
+        string username = "";
+        string password = "";
+        string ISBN = "";
+
+        string color = "  \u001b[32m";
+        int option = 1;
+
+        Console.WriteLine("Bitte geben Sie Ihren vollständigen Namen ein");
+        while (!loginUser) 
+        {
+            key = Console.ReadKey();
+            if (key.Key == ConsoleKey.Enter) 
+            {
+                loginUser = true;
+                break;
+            } 
+            username += key.KeyChar;
+        }
+        Console.WriteLine("Bitte geben Sie Ihr Passwort ein");
+        while (!loginPW) 
+        {
+            key = Console.ReadKey();
+            if (key.Key == ConsoleKey.Enter)
+            {
+                if (checkPW(username, password, students)) loginPW = true;
+                else Console.WriteLine("Sie haben das falsche Passwort eingegeben");
+                break;
+            }
+            password += key.KeyChar;
+        }
+        while (!showBooks) 
+        {
+            Console.WriteLine($"{(option == 1 ? color : "    ")}Alle Bücher anzeigen\u001b[0m");
+            Console.WriteLine($"{(option == 2 ? color : "    ")}Ausgeliehene Bücher anzeigen\u001b[0m");
+            Console.WriteLine($"{(option == 3 ? color : "    ")}Buch ausleihen\u001b[0m");
+            key = Console.ReadKey(true);
+            switch (key.Key) 
+            {
+                case ConsoleKey.DownArrow:
+                    option = (option == 3 ? 1 : option + 1);
+                    break;
+
+                case ConsoleKey.UpArrow:
+                    option = (option == 1 ? 3 : option - 1);
+                    break;
+
+                case ConsoleKey.Enter:
+                    if (option < 3)
+                    {
+                        BookOptions(option, books, username, students);
+                        break;
+                    }
+                    else 
+                    {
+                        showBooks = true;
+                        break;
+                    }
+            }
+        }
+        Console.WriteLine("Bitte geben Sie die ISBN-Nummer des Buches ein, das Sie ausleihen möchten");
+        while (!getBooks) 
+        {
+            key = Console.ReadKey();
+            if (key.Key == ConsoleKey.Enter)
+            {
+                Student temp = getUserByName(username, students);
+                temp.BorrowBook(getBookByISBN(ISBN, books), lib);
+                getBooks = true;
+                break;
+            }
+            ISBN += key.KeyChar;
+        }
+    }
+    static Student getUserByName(string name, List<Student> users) 
+    {
+        return users.Where(x=> x.name== name).FirstOrDefault();
+    }
+    static Book getBookByISBN(string ISBN, List<Book> allBooks) 
+    {
+        return allBooks.Where(x=>x.ISBN== ISBN).FirstOrDefault();
+    }
+    static void BookOptions(int option, List<Book> allBooks,string username, List<Student> students) 
+    {
+        if (option == 1) 
+        {
+            foreach (Book book in allBooks) 
+            {
+                Console.WriteLine(book.ISBN+ book.Title+ book.Name + "\n");
+            }
+        }
+        else if (option == 2) 
+        {
+            Student temp = students.Where(x=> x.name == username).FirstOrDefault();
+            foreach (Book book in temp.borrowedBooks) 
+            {
+                Console.WriteLine(book.ISBN + book.Title + book.Name + "\n");
+            }
+        }
+        else if (option == 3) 
+        {
+
+        }
+    }
+    static bool checkPW(string username, string password, List<Student> students) 
+    {
+        Student temp = students.Where(x=>x.name==username).FirstOrDefault();
+        if (temp.password == password) return true;
+        else return false;
+    }
+    public void test(List<Student> students, List<Book> books, List<Book> booksDupe, Library lib) 
+    {
+
         Random rnd = new Random();
         Random rnd2 = new Random();
 
-        foreach (Student student in students) 
+        foreach (Student student in students)
         {
             //Verteile Bücher
             int counter = rnd.Next(1, 99);
             int count = rnd2.Next(1, 3);
             Book book = lib._allBooks[counter];
-            for (int i = 0; i < count; i++) 
+            for (int i = 0; i < count; i++)
             {
                 student.BorrowBook(book, lib);
                 counter = rnd.Next(1, 99);
@@ -26,7 +146,7 @@ internal class Program
         foreach (Student student in students)
         {
             //Gebe Bücher zurück
-            for(int i = 0; i< student.borrowedBooks.Count;i++)
+            for (int i = 0; i < student.borrowedBooks.Count; i++)
 
             {
                 student.ReturnBook(student.borrowedBooks[i], lib);
@@ -59,16 +179,16 @@ internal class Program
     {
         List<Student> students = new List<Student>()
         {
-            new Student(Guid.NewGuid(), "Max Müller", new DateOnly(2005, 3, 20), new List<Book>(),true),
-            new Student(Guid.NewGuid(), "Anna Schmidt", new DateOnly(2004, 7, 12), new List<Book>(), false),
-            new Student(Guid.NewGuid(), "Lukas Weber", new DateOnly(2006, 1, 5), new List<Book>(), false),
-            new Student(Guid.NewGuid(), "Sophia Fischer", new DateOnly(2005, 11, 18), new List<Book>(),true),
-            new Student(Guid.NewGuid(), "Tim Becker", new DateOnly(2004, 5, 30), new List<Book>(),true),
-            new Student(Guid.NewGuid(), "Laura Wagner", new DateOnly(2006, 9, 25), new List<Book>(),true),
-            new Student(Guid.NewGuid(), "Jonas Hoffmann", new DateOnly(2005, 2, 14), new List<Book>(), false),
-            new Student(Guid.NewGuid(), "Emma Koch", new DateOnly(2004, 12, 3), new List<Book>(),true),
-            new Student(Guid.NewGuid(), "Felix Neumann", new DateOnly(2006, 6, 10), new List<Book>(), false),
-            new Student(Guid.NewGuid(), "Mia Braun", new DateOnly(2005, 8, 8), new List<Book>(),true)
+            new Student(Guid.NewGuid(), "Max Müller", new DateOnly(2005, 3, 20), new List<Book>(),true,"test"),
+            new Student(Guid.NewGuid(), "Anna Schmidt", new DateOnly(2004, 7, 12), new List<Book>(), false, "test"),
+            new Student(Guid.NewGuid(), "Lukas Weber", new DateOnly(2006, 1, 5), new List<Book>(), false, "test"),
+            new Student(Guid.NewGuid(), "Sophia Fischer", new DateOnly(2005, 11, 18), new List<Book>(),true, "test"),
+            new Student(Guid.NewGuid(), "Tim Becker", new DateOnly(2004, 5, 30), new List<Book>(),true, "test"),
+            new Student(Guid.NewGuid(), "Laura Wagner", new DateOnly(2006, 9, 25), new List<Book>(),true, "test"),
+            new Student(Guid.NewGuid(), "Jonas Hoffmann", new DateOnly(2005, 2, 14), new List<Book>(), false, "test"),
+            new Student(Guid.NewGuid(), "Emma Koch", new DateOnly(2004, 12, 3), new List<Book>(),true, "test"),
+            new Student(Guid.NewGuid(), "Felix Neumann", new DateOnly(2006, 6, 10), new List<Book>(), false, "test"),
+            new Student(Guid.NewGuid(), "Mia Braun", new DateOnly(2005, 8, 8), new List<Book>(),true, "test")
         };
         return students;
     }

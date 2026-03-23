@@ -13,14 +13,15 @@ namespace LibraryProject.classes
         public DateOnly birthday;
         public List<Book> borrowedBooks;
         public bool _isMember;
-
-        public Student(Guid id, string name, DateOnly birthday, List<Book> borrowedBooks, bool isMember)
+        public string password;
+        public Student(Guid id, string name, DateOnly birthday, List<Book> borrowedBooks, bool isMember, string password)
         {
             this.id = id;
             this.name = name;
             this.birthday = birthday;
             this.borrowedBooks = borrowedBooks;
             _isMember = isMember;
+            this.password = password;
         }
 
         public void BorrowBook(Book book, Library lib) 
