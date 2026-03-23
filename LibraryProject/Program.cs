@@ -26,16 +26,16 @@ internal class Program
     {
         List<Student> students = new List<Student>()
         {
-            new Student(Guid.NewGuid(), "Max Müller", new DateOnly(2005, 3, 20), new List<Book>()),
-            new Student(Guid.NewGuid(), "Anna Schmidt", new DateOnly(2004, 7, 12), new List<Book>()),
-            new Student(Guid.NewGuid(), "Lukas Weber", new DateOnly(2006, 1, 5), new List<Book>()),
-            new Student(Guid.NewGuid(), "Sophia Fischer", new DateOnly(2005, 11, 18), new List<Book>()),
-            new Student(Guid.NewGuid(), "Tim Becker", new DateOnly(2004, 5, 30), new List<Book>()),
-            new Student(Guid.NewGuid(), "Laura Wagner", new DateOnly(2006, 9, 25), new List<Book>()),
-            new Student(Guid.NewGuid(), "Jonas Hoffmann", new DateOnly(2005, 2, 14), new List<Book>()),
-            new Student(Guid.NewGuid(), "Emma Koch", new DateOnly(2004, 12, 3), new List<Book>()),
-            new Student(Guid.NewGuid(), "Felix Neumann", new DateOnly(2006, 6, 10), new List<Book>()),
-            new Student(Guid.NewGuid(), "Mia Braun", new DateOnly(2005, 8, 8), new List<Book>())
+            new Student(Guid.NewGuid(), "Max Müller", new DateOnly(2005, 3, 20), new List<Book>(),true),
+            new Student(Guid.NewGuid(), "Anna Schmidt", new DateOnly(2004, 7, 12), new List<Book>(), false),
+            new Student(Guid.NewGuid(), "Lukas Weber", new DateOnly(2006, 1, 5), new List<Book>(), false),
+            new Student(Guid.NewGuid(), "Sophia Fischer", new DateOnly(2005, 11, 18), new List<Book>(),true),
+            new Student(Guid.NewGuid(), "Tim Becker", new DateOnly(2004, 5, 30), new List<Book>(),true),
+            new Student(Guid.NewGuid(), "Laura Wagner", new DateOnly(2006, 9, 25), new List<Book>(),true),
+            new Student(Guid.NewGuid(), "Jonas Hoffmann", new DateOnly(2005, 2, 14), new List<Book>(), false),
+            new Student(Guid.NewGuid(), "Emma Koch", new DateOnly(2004, 12, 3), new List<Book>(),true),
+            new Student(Guid.NewGuid(), "Felix Neumann", new DateOnly(2006, 6, 10), new List<Book>(), false),
+            new Student(Guid.NewGuid(), "Mia Braun", new DateOnly(2005, 8, 8), new List<Book>(),true)
         };
         return students;
     }
