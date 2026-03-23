@@ -6,8 +6,8 @@ internal class Program
     {
         List<Student> students = initStudents();
         List<Book> books = ReadBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
-        List<Book> dupe = ReadBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
-        Library lib = new Library(books,dupe,new List<ListEntry>());
+        List<Book> booksDupe = ReadBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
+        Library lib = new Library(books,booksDupe,new List<ListEntry>());
         Random rnd = new Random();
         Random rnd2 = new Random();
 
