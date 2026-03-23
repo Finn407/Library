@@ -28,13 +28,13 @@ namespace LibraryProject.classes
             if (this.borrowedBooks.Count < 5 && this._isMember)
             {
                 this.borrowedBooks.Add(book);
-                lib.addBooksToEntries(this, new List<Book>() { book });
+                lib.AddBooksToEntries(this, new List<Book>() { book });
                 lib._booksInStore.Remove(book);
             }
             else if (this.borrowedBooks.Count < 1)
             {
                 this.borrowedBooks.Add(book);
-                lib.addBooksToEntries(this, new List<Book>() { book });
+                lib.AddBooksToEntries(this, new List<Book>() { book });
                 lib._booksInStore.Remove(book);
             }
             else 
@@ -44,7 +44,7 @@ namespace LibraryProject.classes
         }
         public Book ReturnBook(Book book, Library lib) 
         {
-            lib.removeBookFromStudent(this, book);
+            lib.RemoveBookFromStudent(this, book);
             return book;
         }
         public List<Book> ShowBooks() 
