@@ -37,11 +37,14 @@ namespace LibraryProject.classes
                 lib.addBooksToEntries(this, new List<Book>() { book });
                 lib._booksInStore.Remove(book);
             }
+            else 
+            {
+                Console.WriteLine($"Der Schüler: {this.name} kann das Buch {book.Name} nicht ausleihen");
+            }
         }
         public Book ReturnBook(Book book, Library lib) 
         {
             lib.removeBookFromStudent(this, book);
-            //lib._booksInStore.Add(book);
             return book;
         }
         public List<Book> ShowBooks() 

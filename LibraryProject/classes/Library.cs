@@ -17,7 +17,7 @@ namespace LibraryProject.classes
             this._booksInStore = booksInStore;
             this._entrysInStore = entriesInStore;
         }
-        public void addBooksToEntries(Student student, List<Book> books) 
+        public void AddBooksToEntries(Student student, List<Book> books) 
         {
             ListEntry entry = _entrysInStore.Where(x => x.Student.id == student.id).FirstOrDefault();
             if (entry != null)
@@ -32,7 +32,7 @@ namespace LibraryProject.classes
                 _entrysInStore.Add(new ListEntry(student, books));
             }
         }
-        public void removeBookFromStudent(Student student, Book book)
+        public void RemoveBookFromStudent(Student student, Book book)
         {
             ListEntry entry = _entrysInStore.Where(x => x.Student.id == student.id).FirstOrDefault();
             if (entry != null)

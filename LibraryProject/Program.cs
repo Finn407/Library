@@ -5,7 +5,7 @@ internal class Program
     static void Main(string[] args) 
     {
         List<Student> students = initStudents();
-        List<Book> books = readBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
+        List<Book> books = ReadBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
         Library lib = new Library(books,books,new List<ListEntry>());
         Random rnd = new Random();
         Random rnd2 = new Random();
@@ -16,6 +16,7 @@ internal class Program
             for (int i = 0; i < count; i++) 
             {
                 student.BorrowBook(books[counter], lib);
+                counter = rnd.Next(1, 99);
             }
         }
         foreach (Student student in students)
@@ -35,21 +36,21 @@ internal class Program
                 student.ReturnBook(book, lib);
             }
         }
-        writeBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv", lib._booksInStore);
+        WriteBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv", lib._booksInStore);
     }
-    static List<Book> readBookCSV(string path) 
+    static List<Book> ReadBookCSV(string path) 
     {
         List<Book> result = new List<Book>();
         var lines = File.ReadLines(path);
         foreach (var line in lines) 
         {
             var values = line.Split(',');
-            Book temp = new Book(values[1], values[0], values[2]);
+            Book temp = new Book(values[0], values[1], values[2]);
             result.Add(temp);
         }
         return result;
     }
-    static void writeBookCSV(string path,List<Book> books) 
+    static void WriteBookCSV(string path,List<Book> books) 
     {
         var lines = new List<string>();
         foreach (Book book in books) 
