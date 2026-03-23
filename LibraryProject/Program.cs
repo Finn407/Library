@@ -8,10 +8,15 @@ internal class Program
         List<Book> books = readBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
         Library lib = new Library(books,books,new List<ListEntry>());
         Random rnd = new Random();
+        Random rnd2 = new Random();
         foreach (Student student in students) 
         {
             int counter = rnd.Next(1, 99);
-            student.BorrowBook(books[counter],lib);
+            int count = rnd2.Next(1, 3);
+            for (int i = 0; i < count; i++) 
+            {
+                student.BorrowBook(books[counter], lib);
+            }
         }
         foreach (Student student in students)
         {
