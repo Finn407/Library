@@ -73,24 +73,24 @@ internal class Program
                 if (key.Key == ConsoleKey.Enter)
                 {
                     //Confirmation Key
-                    if (checkPW(username, password, students)) loginPW = true;
+                    if (checkPW(username, password, students)) 
+                    {
+                        loginUser = true;
+                        loginPW = true;
+                        showBooks = false;
+                        getBooks = true;
+                    } 
                     else Console.WriteLine("Sie haben das falsche Passwort eingegeben");
                     break;
                 }
                 else if (key.Key == ConsoleKey.Delete)
                 {
                     //Back Key
-                    loginUser = false;//evtl tauschen
-                    loginPW = true;//
+                    loginUser = false;
+                    loginPW = true;
                     showBooks = true;
                     getBooks = true;
                     break;
-                }
-                else 
-                {
-                    loginUser = true;
-                    showBooks = false;
-                    getBooks = true;
                 }
                     password += key.KeyChar;
             }
@@ -146,9 +146,17 @@ internal class Program
                 {
                     //Confirmation Key
                     Student temp = getUserByName(username, students);
-                    temp.BorrowBook(getBookByISBN(ISBN, books), lib);
-                    getBooks = true;
-                    break;
+                    Book book = getBookByISBN(ISBN, books);
+                    if (book.ISBN!="")
+                    {
+                        temp.BorrowBook(book, lib);
+                        getBooks = true;
+                        break;
+                    }
+                    else 
+                    {
+                        Console.WriteLine("Das Buch mit dieser ISBN konnte nicht gefuden werden. Bitte versuchen Sie es erneut");
+                    }
                 }
                 ISBN += key.KeyChar;
             }
@@ -163,7 +171,7 @@ internal class Program
     }
     static Book getBookByISBN(string ISBN, List<Book> allBooks) 
     {
-        return allBooks.Where(x=>x.ISBN== ISBN).FirstOrDefault() ?? new Book("","","",new List<Student>());
+        return allBooks.Where(x=>x.ISBN == ISBN).FirstOrDefault() ?? new Book("","","",new List<Student>());
     }
     static bool BookOptions(int option, List<Book> allBooks,string username, List<Student> students) 
     {
