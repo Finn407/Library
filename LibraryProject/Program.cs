@@ -26,52 +26,77 @@ internal class Program
         {
             if (!loginUser) 
             { 
+                //initialize Username View
                 username = "";
+                loginPW = false;
                 showBooks = false;
                 getBooks = false;
-                loginPW = false;
                 Console.WriteLine("Bitte geben Sie Ihren vollständigen Namen ein");
             }
             while (!loginUser)
             {
+                //Username view
                 key = Console.ReadKey();
                 if (key.Key == ConsoleKey.Enter)
                 {
+                    //Confirmation Key
                     loginUser = true;
                     break;
                 }
-                if (key.Key == ConsoleKey.Delete) 
+                else if (key.Key == ConsoleKey.Delete)
                 {
-                    getBooks = true;
-                    showBooks = true;
+                    //Back Key
+                    loginUser = false;
                     loginPW = true;
+                    showBooks = true;
+                    getBooks = true;
                     break;
                 }
-                username += key.KeyChar;
+                else 
+                {
+                    loginPW = false;
+                    showBooks = true;
+                    getBooks = true;
+                }
+                    username += key.KeyChar;
             }
-            if(!loginPW)password = "";
-            if (!loginPW)Console.WriteLine("Bitte geben Sie Ihr Passwort ein");
+            if (!loginPW) 
+            {
+                //initialize password View
+                password = "";
+                Console.WriteLine("Bitte geben Sie Ihr Passwort ein");
+            }
             while (!loginPW)
             {
+                //PW View
                 key = Console.ReadKey();
                 if (key.Key == ConsoleKey.Enter)
                 {
+                    //Confirmation Key
                     if (checkPW(username, password, students)) loginPW = true;
                     else Console.WriteLine("Sie haben das falsche Passwort eingegeben");
                     break;
                 }
-                if (key.Key == ConsoleKey.Delete)
+                else if (key.Key == ConsoleKey.Delete)
                 {
-                    getBooks = true;
+                    //Back Key
+                    loginUser = false;//evtl tauschen
+                    loginPW = true;//
                     showBooks = true;
-                    loginPW = true;
-                    loginUser = false;
+                    getBooks = true;
                     break;
                 }
-                password += key.KeyChar;
+                else 
+                {
+                    loginUser = true;
+                    showBooks = false;
+                    getBooks = true;
+                }
+                    password += key.KeyChar;
             }
             while (!showBooks)
             {
+                //Menu View
                 Console.WriteLine($"{(option == 1 ? color : "    ")}Alle Bücher anzeigen\u001b[0m");
                 Console.WriteLine($"{(option == 2 ? color : "    ")}Ausgeliehene Bücher anzeigen\u001b[0m");
                 Console.WriteLine($"{(option == 3 ? color : "    ")}Buch ausleihen\u001b[0m");
@@ -79,37 +104,47 @@ internal class Program
                 key = Console.ReadKey(true);
                 switch (key.Key)
                 {
-                    case ConsoleKey.DownArrow:
+                    case ConsoleKey.DownArrow://Toggle Selection
                         option = (option == 4 ? 1 : option + 1);
                         break;
 
-                    case ConsoleKey.UpArrow:
+                    case ConsoleKey.UpArrow://Toggle Selection
                         option = (option == 1 ? 4 : option - 1);
                         break;
 
                     case ConsoleKey.Enter:
+                        //Confirmation Key
                         if (option <= 3)
                         {
-                            getBooks=BookOptions(option, books, username, students);
-                            if(option == 3)showBooks=true;
+                            //Book actions
+                            getBooks = BookOptions(option, books, username, students);
+                            if(option == 3)showBooks=true; //go to next loop
                             break;
                         }
                         else 
                         {
-                            showBooks= true;
+                            //go back to login
                             loginUser = false;
-                            loginPW = false;
+                            loginPW = true;
+                            showBooks = true;
+                            getBooks = true;
                             break;
                         }
                 }
             }
-            ISBN = "";
-            if (!getBooks)Console.WriteLine("Bitte geben Sie die ISBN-Nummer des Buches ein, das Sie ausleihen möchten");
+            if (!getBooks) 
+            {
+                //initialize GetBookByISBN View
+                ISBN = "";
+                Console.WriteLine("Bitte geben Sie die ISBN-Nummer des Buches ein, das Sie ausleihen möchten");
+            }
             while (!getBooks)
             {
+                //GetBookByISBN View
                 key = Console.ReadKey();
                 if (key.Key == ConsoleKey.Enter)
                 {
+                    //Confirmation Key
                     Student temp = getUserByName(username, students);
                     temp.BorrowBook(getBookByISBN(ISBN, books), lib);
                     getBooks = true;
@@ -117,6 +152,7 @@ internal class Program
                 }
                 ISBN += key.KeyChar;
             }
+            //reset parameter
             showBooks = false;
             getBooks = false;
         }
@@ -131,8 +167,10 @@ internal class Program
     }
     static bool BookOptions(int option, List<Book> allBooks,string username, List<Student> students) 
     {
+        //Map Functionalities to selected menu value
         if (option == 1)
         {
+            //Return all books
             foreach (Book book in allBooks)
             {
                 Console.WriteLine($"{book.ISBN} {book.Title} {book.Name}  \n");
@@ -141,6 +179,7 @@ internal class Program
         }
         else if (option == 2)
         {
+            //Return borrowed books
             Student temp = students.Where(x => x.name == username).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, "");//Fehler
             foreach (Book book in temp.borrowedBooks)
             {
@@ -150,6 +189,7 @@ internal class Program
         }
         else if (option == 3)
         {
+            //return false -> triggers next loop (getBooks)
             return false;
         }
         return true;
