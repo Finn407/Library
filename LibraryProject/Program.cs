@@ -24,8 +24,14 @@ internal class Program
         int option = 1;
         while (true)
         {
-            if(!loginUser)username = "";
-            if (!loginUser)Console.WriteLine("Bitte geben Sie Ihren vollständigen Namen ein");
+            if (!loginUser) 
+            { 
+                username = "";
+                showBooks = false;
+                getBooks = false;
+                loginPW = false;
+                Console.WriteLine("Bitte geben Sie Ihren vollständigen Namen ein");
+            }
             while (!loginUser)
             {
                 key = Console.ReadKey();
@@ -34,9 +40,16 @@ internal class Program
                     loginUser = true;
                     break;
                 }
+                if (key.Key == ConsoleKey.Delete) 
+                {
+                    getBooks = true;
+                    showBooks = true;
+                    loginPW = true;
+                    break;
+                }
                 username += key.KeyChar;
             }
-            password = "";
+            if(!loginPW)password = "";
             if (!loginPW)Console.WriteLine("Bitte geben Sie Ihr Passwort ein");
             while (!loginPW)
             {
@@ -45,6 +58,14 @@ internal class Program
                 {
                     if (checkPW(username, password, students)) loginPW = true;
                     else Console.WriteLine("Sie haben das falsche Passwort eingegeben");
+                    break;
+                }
+                if (key.Key == ConsoleKey.Delete)
+                {
+                    getBooks = true;
+                    showBooks = true;
+                    loginPW = true;
+                    loginUser = false;
                     break;
                 }
                 password += key.KeyChar;
@@ -139,7 +160,7 @@ internal class Program
         if (temp.password == password) return true;
         else return false;
     }
-    public void test(List<Student> students, List<Book> books, List<Book> booksDupe, Library lib) 
+    static void test(List<Student> students, List<Book> books, List<Book> booksDupe, Library lib) 
     {
 
         Random rnd = new Random();
