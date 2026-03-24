@@ -121,7 +121,8 @@ internal class Program
     }
     static bool checkPW(string username, string password, List<Student> students) 
     {
-        Student temp = students.Where(x=>x.name==username).FirstOrDefault();
+        Student temp = new Student(new Guid(), "",new DateOnly(2011,1,1),new List<Book>(),false,password);
+        temp = students.Where(x=>x.name==username).FirstOrDefault();
         if (temp.password == password) return true;
         else return false;
     }
