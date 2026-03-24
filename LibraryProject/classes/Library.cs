@@ -19,8 +19,8 @@ namespace LibraryProject.classes
         }
         public void AddBooksToEntries(Student student, List<Book> books)
         {
-            ListEntry entry = _entrysInStore.Where(x => x.Student.id == student.id).FirstOrDefault();
-            if (entry is null)
+            ListEntry entry = _entrysInStore.Where(x => x.Student.id == student.id).FirstOrDefault() ?? new ListEntry(new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, ""), new List<Book>());
+            if (entry.Student.name=="")
             {
                 _entrysInStore.Add(new ListEntry(student, books));
                 return;
@@ -34,8 +34,8 @@ namespace LibraryProject.classes
         }
         public void RemoveBookFromStudent(Student student, Book book)
         {
-            ListEntry entry = _entrysInStore.Where(x => x.Student.id == student.id).FirstOrDefault();
-            if (entry != null)
+            ListEntry entry = _entrysInStore.Where(x => x.Student.id == student.id).FirstOrDefault() ?? new ListEntry(new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, ""), new List<Book>());
+            if (entry.Student.name != "")
             {
                 entry.Books.Remove(book);
                 _booksInStore.Add(book);
@@ -43,14 +43,14 @@ namespace LibraryProject.classes
         }
         public bool BookAvailable(Book book)
         {
-            Book temp = _booksInStore.Where(x => x.ISBN == book.ISBN).FirstOrDefault();
+            Book temp = _booksInStore.Where(x => x.ISBN == book.ISBN).FirstOrDefault() ?? new Book("", "", "", new List<Student>()); 
             if (temp != null) return true;
             else return false;
         }
         public bool WaitingAvailable(Book book, Student student)
         {
-            Student tempStudent = book.WaitingList.Where(x => x.id == student.id).FirstOrDefault();
-            if (tempStudent == null) return true;
+            Student tempStudent = book.WaitingList.Where(x => x.id == student.id).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, ""); ;
+            if (tempStudent.name == "") return true;
             else return false;
 
         }

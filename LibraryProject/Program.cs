@@ -22,107 +22,120 @@ internal class Program
 
         string color = "  \u001b[32m";
         int option = 1;
-
-        Console.WriteLine("Bitte geben Sie Ihren vollständigen Namen ein");
-        while (!loginUser) 
+        while (true)
         {
-            key = Console.ReadKey();
-            if (key.Key == ConsoleKey.Enter) 
+            if(!loginUser)username = "";
+            if (!loginUser)Console.WriteLine("Bitte geben Sie Ihren vollständigen Namen ein");
+            while (!loginUser)
             {
-                loginUser = true;
-                break;
-            } 
-            username += key.KeyChar;
-        }
-        Console.WriteLine("Bitte geben Sie Ihr Passwort ein");
-        while (!loginPW) 
-        {
-            key = Console.ReadKey();
-            if (key.Key == ConsoleKey.Enter)
-            {
-                if (checkPW(username, password, students)) loginPW = true;
-                else Console.WriteLine("Sie haben das falsche Passwort eingegeben");
-                break;
-            }
-            password += key.KeyChar;
-        }
-        while (!showBooks) 
-        {
-            Console.WriteLine($"{(option == 1 ? color : "    ")}Alle Bücher anzeigen\u001b[0m");
-            Console.WriteLine($"{(option == 2 ? color : "    ")}Ausgeliehene Bücher anzeigen\u001b[0m");
-            Console.WriteLine($"{(option == 3 ? color : "    ")}Buch ausleihen\u001b[0m");
-            key = Console.ReadKey(true);
-            switch (key.Key) 
-            {
-                case ConsoleKey.DownArrow:
-                    option = (option == 3 ? 1 : option + 1);
+                key = Console.ReadKey();
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    loginUser = true;
                     break;
-
-                case ConsoleKey.UpArrow:
-                    option = (option == 1 ? 3 : option - 1);
-                    break;
-
-                case ConsoleKey.Enter:
-                    if (option < 3)
-                    {
-                        BookOptions(option, books, username, students);
-                        break;
-                    }
-                    else 
-                    {
-                        showBooks = true;
-                        break;
-                    }
+                }
+                username += key.KeyChar;
             }
-        }
-        Console.WriteLine("Bitte geben Sie die ISBN-Nummer des Buches ein, das Sie ausleihen möchten");
-        while (!getBooks) 
-        {
-            key = Console.ReadKey();
-            if (key.Key == ConsoleKey.Enter)
+            password = "";
+            if (!loginPW)Console.WriteLine("Bitte geben Sie Ihr Passwort ein");
+            while (!loginPW)
             {
-                Student temp = getUserByName(username, students);
-                temp.BorrowBook(getBookByISBN(ISBN, books), lib);
-                getBooks = true;
-                break;
+                key = Console.ReadKey();
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    if (checkPW(username, password, students)) loginPW = true;
+                    else Console.WriteLine("Sie haben das falsche Passwort eingegeben");
+                    break;
+                }
+                password += key.KeyChar;
             }
-            ISBN += key.KeyChar;
+            while (!showBooks)
+            {
+                Console.WriteLine($"{(option == 1 ? color : "    ")}Alle Bücher anzeigen\u001b[0m");
+                Console.WriteLine($"{(option == 2 ? color : "    ")}Ausgeliehene Bücher anzeigen\u001b[0m");
+                Console.WriteLine($"{(option == 3 ? color : "    ")}Buch ausleihen\u001b[0m");
+                Console.WriteLine($"{(option == 4 ? color : "    ")}Logout\u001b[0m");
+                key = Console.ReadKey(true);
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        option = (option == 4 ? 1 : option + 1);
+                        break;
+
+                    case ConsoleKey.UpArrow:
+                        option = (option == 1 ? 4 : option - 1);
+                        break;
+
+                    case ConsoleKey.Enter:
+                        if (option <= 3)
+                        {
+                            getBooks=BookOptions(option, books, username, students);
+                            if(option == 3)showBooks=true;
+                            break;
+                        }
+                        else 
+                        {
+                            showBooks= true;
+                            loginUser = false;
+                            loginPW = false;
+                            break;
+                        }
+                }
+            }
+            ISBN = "";
+            if (!getBooks)Console.WriteLine("Bitte geben Sie die ISBN-Nummer des Buches ein, das Sie ausleihen möchten");
+            while (!getBooks)
+            {
+                key = Console.ReadKey();
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    Student temp = getUserByName(username, students);
+                    temp.BorrowBook(getBookByISBN(ISBN, books), lib);
+                    getBooks = true;
+                    break;
+                }
+                ISBN += key.KeyChar;
+            }
+            showBooks = false;
+            getBooks = false;
         }
     }
     static Student getUserByName(string name, List<Student> users) 
     {
-        return users.Where(x=> x.name== name).FirstOrDefault();
+        return users.Where(x => x.name == name).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, "");
     }
     static Book getBookByISBN(string ISBN, List<Book> allBooks) 
     {
-        return allBooks.Where(x=>x.ISBN== ISBN).FirstOrDefault();
+        return allBooks.Where(x=>x.ISBN== ISBN).FirstOrDefault() ?? new Book("","","",new List<Student>());
     }
-    static void BookOptions(int option, List<Book> allBooks,string username, List<Student> students) 
+    static bool BookOptions(int option, List<Book> allBooks,string username, List<Student> students) 
     {
-        if (option == 1) 
+        if (option == 1)
         {
-            foreach (Book book in allBooks) 
+            foreach (Book book in allBooks)
             {
-                Console.WriteLine(book.ISBN+ book.Title+ book.Name + "\n");
+                Console.WriteLine($"{book.ISBN} {book.Title} {book.Name}  \n");
             }
+            return true;
         }
-        else if (option == 2) 
+        else if (option == 2)
         {
-            Student temp = students.Where(x=> x.name == username).FirstOrDefault();
-            foreach (Book book in temp.borrowedBooks) 
+            Student temp = students.Where(x => x.name == username).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, "");//Fehler
+            foreach (Book book in temp.borrowedBooks)
             {
-                Console.WriteLine(book.ISBN + book.Title + book.Name + "\n");
+                Console.WriteLine($"{book.ISBN} {book.Title} {book.Name} wurde ausgeliehen \n");
             }
+            return true;
         }
-        else if (option == 3) 
+        else if (option == 3)
         {
-
+            return false;
         }
+        return true;
     }
     static bool checkPW(string username, string password, List<Student> students) 
     {
-        Student temp = new Student(new Guid(), "",new DateOnly(2011,1,1),new List<Book>(),false,password);
-        temp = students.Where(x=>x.name==username).FirstOrDefault();
+        Student temp = students.Where(x=>x.name==username).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, password);
         if (temp.password == password) return true;
         else return false;
     }
