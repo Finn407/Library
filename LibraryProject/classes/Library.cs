@@ -4,55 +4,51 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryProject.classes
+namespace LibraryProject.classes;
+
+public class Library
 {
-    internal class Library
+    private List<Book> _allBooks;
+    private List<Student> _allStudents;  
+
+    public Library(List<Book> allBooks,  List<Student> allStudents)
     {
-        public List<Book> _allBooks;
-        public List<Book> _booksInStore;
-        public List<ListEntry> _entrysInStore;
-        public Library(List<Book> allBooks, List<Book> booksInStore, List<ListEntry> entriesInStore)
-        {
-            this._allBooks = allBooks;
-            this._booksInStore = booksInStore;
-            this._entrysInStore = entriesInStore;
-        }
-        public void AddBooksToEntries(Student student, List<Book> books)
-        {
-            ListEntry entry = _entrysInStore.Where(x => x.Student.id == student.id).FirstOrDefault() ?? new ListEntry(new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, ""), new List<Book>());
-            if (entry.Student.name=="")
-            {
-                _entrysInStore.Add(new ListEntry(student, books));
-                return;
-            }
+        this._allBooks = allBooks;
+        this._allStudents = allStudents;    
+    }
+    public IReadOnlyCollection<Book> GetAllBooks() => _allBooks.AsReadOnly();
+    public IReadOnlyCollection<Student> GetAllStudents() => _allStudents.AsReadOnly();
 
-            foreach (Book book in books)
-            {
-                entry.Books.Add(book);
-            }
-
-        }
-        public void RemoveBookFromStudent(Student student, Book book)
-        {
-            ListEntry entry = _entrysInStore.Where(x => x.Student.id == student.id).FirstOrDefault() ?? new ListEntry(new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, ""), new List<Book>());
-            if (entry.Student.name != "")
-            {
-                entry.Books.Remove(book);
-                _booksInStore.Add(book);
-            }
-        }
-        public bool BookAvailable(Book book)
-        {
-            Book temp = _booksInStore.Where(x => x.ISBN == book.ISBN).FirstOrDefault() ?? new Book("", "", "", new List<Student>()); 
-            if (temp != null) return true;
-            else return false;
-        }
-        public bool WaitingAvailable(Book book, Student student)
-        {
-            Student tempStudent = book.WaitingList.Where(x => x.id == student.id).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, ""); ;
-            if (tempStudent.name == "") return true;
-            else return false;
-
-        }
+    public bool BookAvailable(Book book)
+    {
+        Book availableBook = _allBooks.FirstOrDefault(b => b.ISBN == book.ISBN)?? new Book();
+        return availableBook.IsAvailable;
+    }
+    public void AddToWaitingList(Book book, Student student) 
+    {
+        book.AddToWaitingList(student);
+    }
+    public bool WaitingAvailable(Book book, Student student)
+    {
+        return !book.WaitingList.Contains(student);
+    }
+    public Student GetStudentByName(string name)
+    {
+        return _allStudents.FirstOrDefault(x => x.Name == name) ?? new Student();
+    }
+    public Book GetBookByISBN(string ISBN)
+    {
+        return _allBooks.FirstOrDefault(x => x.ISBN == ISBN) ?? new Book();
+    }
+    public bool CheckPW(string username, string password)
+    {
+        Student temp = _allStudents.FirstOrDefault(x => x.Name == username)?? new Student();
+        if (temp.Password == password) return true;
+        else return false;
+    }
+    public void ChangeAvailability(Book book) 
+    {
+        Book temp = _allBooks.FirstOrDefault(x => x.ISBN == book.ISBN) ?? new Book();
+        temp.IsAvailable = !temp.IsAvailable;
     }
 }

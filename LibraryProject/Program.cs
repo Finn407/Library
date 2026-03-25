@@ -1,266 +1,256 @@
 ﻿using LibraryProject.classes;
+using LibraryProject.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.CompilerServices;
 
-internal class Program
+
+IServiceCollection services = new ServiceCollection();
+services.AddSingleton<IStudentRepository, StudentRepository>();
+services.AddSingleton<IBookRepository, BookRepository>();
+IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+IStudentRepository studentRepository = serviceProvider.GetRequiredService<IStudentRepository>();
+IBookRepository bookRepository= serviceProvider.GetRequiredService<IBookRepository>();
+
+List<Student> students = studentRepository.GetAllStudents();
+List<Book> books = bookRepository.GetAllBooks();
+
+Library lib = new Library(books, students);
+
+ConsoleKeyInfo key;
+
+bool showLoginView = false;
+bool showPasswordView = false;
+bool showMenuView = false;
+bool showBorrowView = false;
+
+string username = "";
+string password = "";
+string ISBN = "";
+
+string color = "  \u001b[32m";
+int menuOption = 1;
+while (true)
 {
-    static void Main(string[] args) 
+    if (!showLoginView)
     {
-        List<Student> students = initStudents();
-        List<Book> books = ReadBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
-        List<Book> booksDupe = ReadBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv");
-        Library lib = new Library(books, booksDupe, new List<ListEntry>());
-
-        ConsoleKeyInfo key;
-
-        bool loginUser = false;
-        bool loginPW = false;
-        bool showBooks = false;
-        bool getBooks = false;
-
-        string username = "";
-        string password = "";
-        string ISBN = "";
-
-        string color = "  \u001b[32m";
-        int option = 1;
-        while (true)
+        //initialize Username View
+        Console.Clear();
+        username = "";
+        showPasswordView = false;
+        showMenuView = false;
+        showBorrowView = false;
+        Console.WriteLine("Bitte geben Sie Ihren vollständigen Namen ein");
+    }
+    while (!showLoginView)
+    {
+        //Username view
+        key = Console.ReadKey();
+        if (key.Key == ConsoleKey.Enter)
         {
-            if (!loginUser) 
-            { 
-                //initialize Username View
-                username = "";
-                loginPW = false;
-                showBooks = false;
-                getBooks = false;
-                Console.WriteLine("Bitte geben Sie Ihren vollständigen Namen ein");
-            }
-            while (!loginUser)
+            //Confirmation Key
+            showLoginView = true;
+            break;
+        }
+        else if (key.Key == ConsoleKey.Delete)
+        {
+            //Back Key
+            showLoginView = false;
+            showPasswordView = true;
+            showMenuView = true;
+            showBorrowView = true;
+            break;
+        }
+        else
+        {
+            showPasswordView = false;
+            showMenuView = true;
+            showBorrowView = true;
+        }
+        username += key.KeyChar;
+    }
+    if (!showPasswordView)
+    {
+        //initialize password View
+        Console.Clear();
+        password = "";
+        Console.WriteLine("Bitte geben Sie Ihr Passwort ein");
+    }
+    while (!showPasswordView)
+    {
+        //PW View
+        key = Console.ReadKey();
+        if (key.Key == ConsoleKey.Enter)
+        {
+            //Confirmation Key
+            if (lib.CheckPW(username, password))
             {
-                //Username view
-                key = Console.ReadKey();
-                if (key.Key == ConsoleKey.Enter)
-                {
-                    //Confirmation Key
-                    loginUser = true;
-                    break;
-                }
-                else if (key.Key == ConsoleKey.Delete)
-                {
-                    //Back Key
-                    loginUser = false;
-                    loginPW = true;
-                    showBooks = true;
-                    getBooks = true;
-                    break;
-                }
-                else 
-                {
-                    loginPW = false;
-                    showBooks = true;
-                    getBooks = true;
-                }
-                    username += key.KeyChar;
+                showLoginView = true;
+                showPasswordView = true;
+                showMenuView = false;
+                showBorrowView = true;
             }
-            if (!loginPW) 
-            {
-                //initialize password View
-                password = "";
-                Console.WriteLine("Bitte geben Sie Ihr Passwort ein");
-            }
-            while (!loginPW)
-            {
-                //PW View
-                key = Console.ReadKey();
-                if (key.Key == ConsoleKey.Enter)
-                {
-                    //Confirmation Key
-                    if (checkPW(username, password, students)) 
-                    {
-                        loginUser = true;
-                        loginPW = true;
-                        showBooks = false;
-                        getBooks = true;
-                    } 
-                    else Console.WriteLine("Sie haben das falsche Passwort eingegeben");
-                    break;
-                }
-                else if (key.Key == ConsoleKey.Delete)
-                {
-                    //Back Key
-                    loginUser = false;
-                    loginPW = true;
-                    showBooks = true;
-                    getBooks = true;
-                    break;
-                }
-                    password += key.KeyChar;
-            }
-            while (!showBooks)
-            {
-                //Menu View
-                Console.WriteLine($"{(option == 1 ? color : "    ")}Alle Bücher anzeigen\u001b[0m");
-                Console.WriteLine($"{(option == 2 ? color : "    ")}Ausgeliehene Bücher anzeigen\u001b[0m");
-                Console.WriteLine($"{(option == 3 ? color : "    ")}Buch ausleihen\u001b[0m");
-                Console.WriteLine($"{(option == 4 ? color : "    ")}Logout\u001b[0m");
-                key = Console.ReadKey(true);
-                switch (key.Key)
-                {
-                    case ConsoleKey.DownArrow://Toggle Selection
-                        option = (option == 4 ? 1 : option + 1);
-                        break;
+            else Console.WriteLine("Sie haben das falsche Passwort eingegeben");
+            break;
+        }
+        else if (key.Key == ConsoleKey.Delete)
+        {
+            //Back Key
+            showLoginView = false;
+            showPasswordView = true;
+            showMenuView = true;
+            showBorrowView = true;
+            break;
+        }
+        password += key.KeyChar;
+    }
+    if (!showMenuView) 
+    {
+        Console.Clear();
+    }
+    while (!showMenuView)
+    {
+        //Menu View
+        Console.WriteLine($"{(menuOption == 1 ? color : "    ")}Alle Bücher anzeigen\u001b[0m");
+        Console.WriteLine($"{(menuOption == 2 ? color : "    ")}Ausgeliehene Bücher anzeigen\u001b[0m");
+        Console.WriteLine($"{(menuOption == 3 ? color : "    ")}Buch ausleihen\u001b[0m");
+        Console.WriteLine($"{(menuOption == 4 ? color : "    ")}Logout\u001b[0m");
+        key = Console.ReadKey(true);
+        switch (key.Key)
+        {
+            case ConsoleKey.DownArrow://Toggle Selection
+                menuOption = (menuOption == 4 ? 1 : menuOption + 1);
+                Console.Clear();
+                break;
 
-                    case ConsoleKey.UpArrow://Toggle Selection
-                        option = (option == 1 ? 4 : option - 1);
-                        break;
+            case ConsoleKey.UpArrow://Toggle Selection
+                menuOption = (menuOption == 1 ? 4 : menuOption - 1);
+                Console.Clear();
+                break;
 
-                    case ConsoleKey.Enter:
-                        //Confirmation Key
-                        if (option <= 3)
-                        {
-                            //Book actions
-                            getBooks = BookOptions(option, books, username, students);
-                            if(option == 3)showBooks=true; //go to next loop
-                            break;
-                        }
-                        else 
-                        {
-                            //go back to login
-                            loginUser = false;
-                            loginPW = true;
-                            showBooks = true;
-                            getBooks = true;
-                            break;
-                        }
+            case ConsoleKey.Enter:
+                //Confirmation Key
+                if (menuOption <= 3)
+                {
+                    //Book actions
+                    Console.Clear();
+                    showBorrowView = BookOptions(menuOption, books, username, students);
+                    if (menuOption == 3) showMenuView = true; //repeat loop
+                    break;
                 }
-            }
-            if (!getBooks) 
+                else
+                {
+                    //go back to login
+                    Console.Clear();
+                    showLoginView = false;
+                    showPasswordView = true;
+                    showMenuView = true;
+                    showBorrowView = true;
+                    break;
+                }
+        }
+    }
+    if (!showBorrowView)
+    {
+        //initialize GetBookByISBN View
+        Console.Clear();
+        ISBN = "";
+        Console.WriteLine("Bitte geben Sie die ISBN-Nummer des Buches ein, das Sie ausleihen möchten");
+    }
+    while (!showBorrowView)
+    {
+        //GetBookByISBN View
+        key = Console.ReadKey();
+        if (key.Key == ConsoleKey.Enter)
+        {
+            //Confirmation Key
+            
+            Book book = lib.GetBookByISBN(ISBN);
+            if (book.ISBN != "")
             {
-                //initialize GetBookByISBN View
+                Console.Clear();
+                Student temp = lib.GetStudentByName(username);
+                temp.BorrowBook(book, lib);
+                showBorrowView = true;
+                break;
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("Das Buch mit dieser ISBN konnte nicht gefuden werden. Bitte versuchen Sie es erneut");
                 ISBN = "";
-                Console.WriteLine("Bitte geben Sie die ISBN-Nummer des Buches ein, das Sie ausleihen möchten");
             }
-            while (!getBooks)
-            {
-                //GetBookByISBN View
-                key = Console.ReadKey();
-                if (key.Key == ConsoleKey.Enter)
-                {
-                    //Confirmation Key
-                    Student temp = getUserByName(username, students);
-                    Book book = getBookByISBN(ISBN, books);
-                    if (book.ISBN!="")
-                    {
-                        temp.BorrowBook(book, lib);
-                        getBooks = true;
-                        break;
-                    }
-                    else 
-                    {
-                        Console.WriteLine("Das Buch mit dieser ISBN konnte nicht gefuden werden. Bitte versuchen Sie es erneut");
-                    }
-                }
-                ISBN += key.KeyChar;
-            }
-            //reset parameter
-            showBooks = false;
-            getBooks = false;
         }
+        ISBN += key.KeyChar;
     }
-    static Student getUserByName(string name, List<Student> users) 
+    //reset parameter
+    showMenuView = false;
+    showBorrowView = false;
+}
+
+bool BookOptions(int option, List<Book> allBooks, string username, List<Student> students)
+{
+    //Map Functionalities to selected menu value
+    if (option == 1)
     {
-        return users.Where(x => x.name == name).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, "");
-    }
-    static Book getBookByISBN(string ISBN, List<Book> allBooks) 
-    {
-        return allBooks.Where(x=>x.ISBN == ISBN).FirstOrDefault() ?? new Book("","","",new List<Student>());
-    }
-    static bool BookOptions(int option, List<Book> allBooks,string username, List<Student> students) 
-    {
-        //Map Functionalities to selected menu value
-        if (option == 1)
+        //Return all books
+        foreach (Book book in allBooks)
         {
-            //Return all books
-            foreach (Book book in allBooks)
-            {
-                Console.WriteLine($"{book.ISBN} {book.Title} {book.Name}  \n");
-            }
-            return true;
-        }
-        else if (option == 2)
-        {
-            //Return borrowed books
-            Student temp = students.Where(x => x.name == username).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, "");//Fehler
-            foreach (Book book in temp.borrowedBooks)
-            {
-                Console.WriteLine($"{book.ISBN} {book.Title} {book.Name} wurde ausgeliehen \n");
-            }
-            return true;
-        }
-        else if (option == 3)
-        {
-            //return false -> triggers next loop (getBooks)
-            return false;
+            Console.WriteLine($"{book.ISBN} {book.Title} {book.Name}  \n");
         }
         return true;
     }
-    static bool checkPW(string username, string password, List<Student> students) 
+    else if (option == 2)
     {
-        Student temp = students.Where(x=>x.name==username).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, password);
-        if (temp.password == password) return true;
-        else return false;
+        //Return borrowed books
+        Student temp = students.Where(x => x.Name == username).FirstOrDefault() ?? new Student(new Guid(), "", new DateOnly(2011, 1, 1), new List<Book>(), false, "");//Fehler
+        foreach (Book book in temp._borrowedBooks)
+        {
+            Console.WriteLine($"{book.ISBN} {book.Title} {book.Name} wurde ausgeliehen \n");
+        }
+        return true;
     }
-    static void test(List<Student> students, List<Book> books, List<Book> booksDupe, Library lib) 
+    else if (option == 3)
     {
+        //return false -> triggers next loop (getBooks)
+        return false;
+    }
+    return true;
+}
+/*
+ void test(List<Student> students, List<Book> books, List<Book> booksDupe, Library lib)
+{
 
-        Random rnd = new Random();
-        Random rnd2 = new Random();
+    Random rnd = new Random();
+    Random rnd2 = new Random();
 
-        foreach (Student student in students)
+    foreach (Student student in students)
+    {
+        //Verteile Bücher
+        int counter = rnd.Next(1, 99);
+        int count = rnd2.Next(1, 3);
+        //Book book = lib._allBooks[counter];
+        for (int i = 0; i < count; i++)
         {
-            //Verteile Bücher
-            int counter = rnd.Next(1, 99);
-            int count = rnd2.Next(1, 3);
-            Book book = lib._allBooks[counter];
-            for (int i = 0; i < count; i++)
-            {
-                student.BorrowBook(book, lib);
-                counter = rnd.Next(1, 99);
-            }
+            //student.BorrowBook(book, lib);
+            counter = rnd.Next(1, 99);
         }
-        foreach (Student student in students)
-        {
-            //Gebe Bücher zurück
-            for (int i = 0; i < student.borrowedBooks.Count; i++)
+    }
+    foreach (Student student in students)
+    {
+        //Gebe Bücher zurück
+        for (int i = 0; i < student._borrowedBooks.Count; i++)
 
-            {
-                student.ReturnBook(student.borrowedBooks[i], lib);
-            }
-        }
-        WriteBookCSV("C:\\Users\\f.rademaker\\Documents\\Repo\\LibraryProject\\LibraryProject\\data\\data.csv", lib._booksInStore);
-    }
-    static List<Book> ReadBookCSV(string path) 
-    {
-        List<Book> result = new List<Book>();
-        var lines = File.ReadLines(path);
-        foreach (var line in lines) 
         {
-            var values = line.Split(',');
-            Book temp = new Book(values[0], values[1], values[2], new List<Student>());
-            result.Add(temp);
+            lib.RemoveBookFromStudent(student,student._borrowedBooks[i]);
         }
-        return result;
     }
-    static void WriteBookCSV(string path,List<Book> books) 
-    {
-        var lines = new List<string>();
-        foreach (Book book in books) 
-        {
-            lines.Add($"{book.ISBN},{book.Name},{book.Title}");
-        }
-        File.WriteAllLines(path, lines);
-    }
-    static List<Student> initStudents() 
-    {
-        List<Student> students = new List<Student>()
+    bookRepository.SetAllBooks(lib.GetAllBooks());
+}*/
+/*
+List<Student> initStudents()
+{
+    List<Student> students = new List<Student>()
         {
             new Student(Guid.NewGuid(), "Max Müller", new DateOnly(2005, 3, 20), new List<Book>(),true,"test"),
             new Student(Guid.NewGuid(), "Anna Schmidt", new DateOnly(2004, 7, 12), new List<Book>(), false, "test"),
@@ -273,179 +263,179 @@ internal class Program
             new Student(Guid.NewGuid(), "Felix Neumann", new DateOnly(2006, 6, 10), new List<Book>(), false, "test"),
             new Student(Guid.NewGuid(), "Mia Braun", new DateOnly(2005, 8, 8), new List<Book>(),true, "test")
         };
-        return students;
-    }
-    /*
+    return students;
+}
+*/
+/*
 static List<Book> initBooks()
 {
 
 List<Book> books = new List<Book>
 {
-    new Book("9780439708180", "Harry Potter and the Sorcerer's Stone", "J.K. Rowling"),
-    new Book("9780439064873", "Harry Potter and the Chamber of Secrets", "J.K. Rowling"),
-    new Book("9780439136365", "Harry Potter and the Prisoner of Azkaban", "J.K. Rowling"),
-    new Book("9780439139601", "Harry Potter and the Goblet of Fire", "J.K. Rowling"),
-    new Book("9780439358071", "Harry Potter and the Order of the Phoenix", "J.K. Rowling"),
-    new Book("9780439785969", "Harry Potter and the Half-Blood Prince", "J.K. Rowling"),
-    new Book("9780545010221", "Harry Potter and the Deathly Hallows", "J.K. Rowling"),
+new Book("9780439708180", "Harry Potter and the Sorcerer's Stone", "J.K. Rowling"),
+new Book("9780439064873", "Harry Potter and the Chamber of Secrets", "J.K. Rowling"),
+new Book("9780439136365", "Harry Potter and the Prisoner of Azkaban", "J.K. Rowling"),
+new Book("9780439139601", "Harry Potter and the Goblet of Fire", "J.K. Rowling"),
+new Book("9780439358071", "Harry Potter and the Order of the Phoenix", "J.K. Rowling"),
+new Book("9780439785969", "Harry Potter and the Half-Blood Prince", "J.K. Rowling"),
+new Book("9780545010221", "Harry Potter and the Deathly Hallows", "J.K. Rowling"),
 
-    new Book("9780547928227", "The Hobbit", "J.R.R. Tolkien"),
-    new Book("9780547928210", "The Fellowship of the Ring", "J.R.R. Tolkien"),
-    new Book("9780547928203", "The Two Towers", "J.R.R. Tolkien"),
-    new Book("9780547928197", "The Return of the King", "J.R.R. Tolkien"),
-    new Book("9780618391110", "The Silmarillion", "J.R.R. Tolkien"),
+new Book("9780547928227", "The Hobbit", "J.R.R. Tolkien"),
+new Book("9780547928210", "The Fellowship of the Ring", "J.R.R. Tolkien"),
+new Book("9780547928203", "The Two Towers", "J.R.R. Tolkien"),
+new Book("9780547928197", "The Return of the King", "J.R.R. Tolkien"),
+new Book("9780618391110", "The Silmarillion", "J.R.R. Tolkien"),
 
-    new Book("9780451524935", "1984", "George Orwell"),
-    new Book("9780451526342", "Animal Farm", "George Orwell"),
-    new Book("9780156421171", "Homage to Catalonia", "George Orwell"),
+new Book("9780451524935", "1984", "George Orwell"),
+new Book("9780451526342", "Animal Farm", "George Orwell"),
+new Book("9780156421171", "Homage to Catalonia", "George Orwell"),
 
-    new Book("9780060850524", "Brave New World", "Aldous Huxley"),
-    new Book("9780061561795", "Island", "Aldous Huxley"),
-    new Book("9780061729072", "The Doors of Perception", "Aldous Huxley"),
+new Book("9780060850524", "Brave New World", "Aldous Huxley"),
+new Book("9780061561795", "Island", "Aldous Huxley"),
+new Book("9780061729072", "The Doors of Perception", "Aldous Huxley"),
 
-    new Book("9780141439518", "Pride and Prejudice", "Jane Austen"),
-    new Book("9780141439662", "Sense and Sensibility", "Jane Austen"),
-    new Book("9780141439587", "Emma", "Jane Austen"),
-    new Book("9780141439808", "Mansfield Park", "Jane Austen"),
-    new Book("9780141439792", "Northanger Abbey", "Jane Austen"),
-    new Book("9780141439686", "Persuasion", "Jane Austen"),
+new Book("9780141439518", "Pride and Prejudice", "Jane Austen"),
+new Book("9780141439662", "Sense and Sensibility", "Jane Austen"),
+new Book("9780141439587", "Emma", "Jane Austen"),
+new Book("9780141439808", "Mansfield Park", "Jane Austen"),
+new Book("9780141439792", "Northanger Abbey", "Jane Austen"),
+new Book("9780141439686", "Persuasion", "Jane Austen"),
 
-    new Book("9780307743657", "The Shining", "Stephen King"),
-    new Book("9781501142970", "It", "Stephen King"),
-    new Book("9781501143106", "Misery", "Stephen King"),
-    new Book("9780307743664", "Carrie", "Stephen King"),
-    new Book("9780307743688", "The Stand", "Stephen King"),
-    new Book("9781501156700", "Pet Sematary", "Stephen King"),
-    new Book("9781501160448", "The Green Mile", "Stephen King"),
+new Book("9780307743657", "The Shining", "Stephen King"),
+new Book("9781501142970", "It", "Stephen King"),
+new Book("9781501143106", "Misery", "Stephen King"),
+new Book("9780307743664", "Carrie", "Stephen King"),
+new Book("9780307743688", "The Stand", "Stephen King"),
+new Book("9781501156700", "Pet Sematary", "Stephen King"),
+new Book("9781501160448", "The Green Mile", "Stephen King"),
 
-    new Book("9780553593716", "A Game of Thrones", "George R.R. Martin"),
-    new Book("9780553579901", "A Clash of Kings", "George R.R. Martin"),
-    new Book("9780553573428", "A Storm of Swords", "George R.R. Martin"),
-    new Book("9780553582024", "A Feast for Crows", "George R.R. Martin"),
-    new Book("9780553582017", "A Dance with Dragons", "George R.R. Martin"),
+new Book("9780553593716", "A Game of Thrones", "George R.R. Martin"),
+new Book("9780553579901", "A Clash of Kings", "George R.R. Martin"),
+new Book("9780553573428", "A Storm of Swords", "George R.R. Martin"),
+new Book("9780553582024", "A Feast for Crows", "George R.R. Martin"),
+new Book("9780553582017", "A Dance with Dragons", "George R.R. Martin"),
 
-    new Book("9780316769488", "The Catcher in the Rye", "J.D. Salinger"),
-    new Book("9780316769020", "Franny and Zooey", "J.D. Salinger"),
-    new Book("9780316767729", "Nine Stories", "J.D. Salinger"),
+new Book("9780316769488", "The Catcher in the Rye", "J.D. Salinger"),
+new Book("9780316769020", "Franny and Zooey", "J.D. Salinger"),
+new Book("9780316767729", "Nine Stories", "J.D. Salinger"),
 
-    new Book("9780743273565", "The Great Gatsby", "F. Scott Fitzgerald"),
-    new Book("9780684801544", "Tender Is the Night", "F. Scott Fitzgerald"),
-    new Book("9780743273566", "This Side of Paradise", "F. Scott Fitzgerald"),
+new Book("9780743273565", "The Great Gatsby", "F. Scott Fitzgerald"),
+new Book("9780684801544", "Tender Is the Night", "F. Scott Fitzgerald"),
+new Book("9780743273566", "This Side of Paradise", "F. Scott Fitzgerald"),
 
-    new Book("9781503280786", "Moby Dick", "Herman Melville"),
-    new Book("9781503280787", "Bartleby the Scrivener", "Herman Melville"),
-    new Book("9781503280788", "Billy Budd", "Herman Melville"),
+new Book("9781503280786", "Moby Dick", "Herman Melville"),
+new Book("9781503280787", "Bartleby the Scrivener", "Herman Melville"),
+new Book("9781503280788", "Billy Budd", "Herman Melville"),
 
-    new Book("9780061120084", "To Kill a Mockingbird", "Harper Lee"),
-    new Book("9780062409850", "Go Set a Watchman", "Harper Lee"),
+new Book("9780061120084", "To Kill a Mockingbird", "Harper Lee"),
+new Book("9780062409850", "Go Set a Watchman", "Harper Lee"),
 
-    new Book("9780684801223", "The Old Man and the Sea", "Ernest Hemingway"),
-    new Book("9780684801469", "A Farewell to Arms", "Ernest Hemingway"),
-    new Book("9780684803357", "For Whom the Bell Tolls", "Ernest Hemingway"),
-    new Book("9780743297332", "The Sun Also Rises", "Ernest Hemingway"),
+new Book("9780684801223", "The Old Man and the Sea", "Ernest Hemingway"),
+new Book("9780684801469", "A Farewell to Arms", "Ernest Hemingway"),
+new Book("9780684803357", "For Whom the Bell Tolls", "Ernest Hemingway"),
+new Book("9780743297332", "The Sun Also Rises", "Ernest Hemingway"),
 
-    new Book("9780061122415", "The Alchemist", "Paulo Coelho"),
-    new Book("9780061578953", "Brida", "Paulo Coelho"),
-    new Book("9780061124266", "Veronika Decides to Die", "Paulo Coelho"),
-    new Book("9780060589288", "Eleven Minutes", "Paulo Coelho"),
-    new Book("9780061687457", "The Pilgrimage", "Paulo Coelho"),
+new Book("9780061122415", "The Alchemist", "Paulo Coelho"),
+new Book("9780061578953", "Brida", "Paulo Coelho"),
+new Book("9780061124266", "Veronika Decides to Die", "Paulo Coelho"),
+new Book("9780060589288", "Eleven Minutes", "Paulo Coelho"),
+new Book("9780061687457", "The Pilgrimage", "Paulo Coelho"),
 
-    new Book("9780307474278", "The Da Vinci Code", "Dan Brown"),
-    new Book("9780743493468", "Angels & Demons", "Dan Brown"),
-    new Book("9781400079155", "Inferno", "Dan Brown"),
-    new Book("9780312263126", "Digital Fortress", "Dan Brown"),
-    new Book("9780312944926", "Deception Point", "Dan Brown"),
+new Book("9780307474278", "The Da Vinci Code", "Dan Brown"),
+new Book("9780743493468", "Angels & Demons", "Dan Brown"),
+new Book("9781400079155", "Inferno", "Dan Brown"),
+new Book("9780312263126", "Digital Fortress", "Dan Brown"),
+new Book("9780312944926", "Deception Point", "Dan Brown"),
 
-    new Book("9780307454546", "The Girl with the Dragon Tattoo", "Stieg Larsson"),
-    new Book("9780307454553", "The Girl Who Played with Fire", "Stieg Larsson"),
-    new Book("9780307454560", "The Girl Who Kicked the Hornet's Nest", "Stieg Larsson"),
+new Book("9780307454546", "The Girl with the Dragon Tattoo", "Stieg Larsson"),
+new Book("9780307454553", "The Girl Who Played with Fire", "Stieg Larsson"),
+new Book("9780307454560", "The Girl Who Kicked the Hornet's Nest", "Stieg Larsson"),
 
-    new Book("9780439023528", "The Hunger Games", "Suzanne Collins"),
-    new Book("9780439023498", "Catching Fire", "Suzanne Collins"),
-    new Book("9780439023511", "Mockingjay", "Suzanne Collins"),
+new Book("9780439023528", "The Hunger Games", "Suzanne Collins"),
+new Book("9780439023498", "Catching Fire", "Suzanne Collins"),
+new Book("9780439023511", "Mockingjay", "Suzanne Collins"),
 
-    new Book("9780142424179", "The Fault in Our Stars", "John Green"),
-    new Book("9780142402511", "Looking for Alaska", "John Green"),
-    new Book("9780142414934", "Paper Towns", "John Green"),
-    new Book("9780142410707", "An Abundance of Katherines", "John Green"),
+new Book("9780142424179", "The Fault in Our Stars", "John Green"),
+new Book("9780142402511", "Looking for Alaska", "John Green"),
+new Book("9780142414934", "Paper Towns", "John Green"),
+new Book("9780142410707", "An Abundance of Katherines", "John Green"),
 
-    new Book("9780316015844", "Twilight", "Stephenie Meyer"),
-    new Book("9780316160193", "New Moon", "Stephenie Meyer"),
-    new Book("9780316160209", "Eclipse", "Stephenie Meyer"),
-    new Book("9780316067928", "Breaking Dawn", "Stephenie Meyer"),
+new Book("9780316015844", "Twilight", "Stephenie Meyer"),
+new Book("9780316160193", "New Moon", "Stephenie Meyer"),
+new Book("9780316160209", "Eclipse", "Stephenie Meyer"),
+new Book("9780316067928", "Breaking Dawn", "Stephenie Meyer"),
 
-    new Book("9780066238500", "The Chronicles of Narnia", "C.S. Lewis"),
-    new Book("9780064471053", "Prince Caspian", "C.S. Lewis"),
-    new Book("9780064471077", "The Voyage of the Dawn Treader", "C.S. Lewis"),
-    new Book("9780064471091", "The Silver Chair", "C.S. Lewis"),
-    new Book("9780064471107", "The Last Battle", "C.S. Lewis"),
+new Book("9780066238500", "The Chronicles of Narnia", "C.S. Lewis"),
+new Book("9780064471053", "Prince Caspian", "C.S. Lewis"),
+new Book("9780064471077", "The Voyage of the Dawn Treader", "C.S. Lewis"),
+new Book("9780064471091", "The Silver Chair", "C.S. Lewis"),
+new Book("9780064471107", "The Last Battle", "C.S. Lewis"),
 
-    new Book("9780000000036", "The Crystal Maze", "Ida Peters"),
-    new Book("9780000000037", "Ghost Protocol", "Theo Lang"),
-    new Book("9780000000038", "Fire and Code", "Helena Roth"),
-    new Book("9780000000039", "The Dark Web", "Nico Sommer"),
-    new Book("9780000000040", "Silent Code", "Finn Jäger"),
-    new Book("9780000000041", "The Last Guardian", "Johanna Haas"),
-    new Book("9780000000042", "Frozen Time", "Tobias Schuster"),
-    new Book("9780000000043", "The Infinite Key", "Sarah Kern"),
-    new Book("9780000000044", "Shadows Rising", "Jan Fuchs"),
-    new Book("9780000000045", "The Final System", "Marlene Weiß"),
-    new Book("9780000000046", "Virtual Reality", "Tom Schmitt"),
-    new Book("9780000000047", "The Red Signal", "Alina Dietrich"),
-    new Book("9780000000048", "Echo Chamber", "Erik Schmid"),
-    new Book("9780000000049", "Binary Dreams", "Lina Conrad"),
-    new Book("9780000000050", "The Lost Data", "Simon Werner"),
-    new Book("9780000000051", "Cyber Storm", "Paula Voigt"),
-    new Book("9780000000052", "The Hidden Node", "Robin Keller"),
-    new Book("9780000000053", "Silent Network", "Julia Sauer"),
-    new Book("9780000000054", "The Black Code", "Marvin Franke"),
-    new Book("9780000000055", "Digital Horizon", "Lena Barth"),
-    new Book("9780000000056", "The Final Byte", "Chris Ludwig"),
-    new Book("9780000000057", "Neural Path", "Sven Krämer"),
-    new Book("9780000000058", "The Data Stream", "Anne Beckmann"),
-    new Book("9780000000059", "Lost Connection", "Marc Schreiber"),
-    new Book("9780000000060", "The Code Breaker", "Tina Busch"),
-    new Book("9780000000061", "Dark Signal", "Kevin Wolff"),
-    new Book("9780000000062", "The Last Node", "Vanessa Arndt"),
-    new Book("9780000000063", "Hidden System", "Patrick Krüger"),
-    new Book("9780000000064", "The Infinite Loop 2", "Laura Weiß"),
-    new Book("9780000000065", "Digital Storm", "Daniel Bergmann"),
-    new Book("9780000000066", "Silent Protocol", "Julia Klein"),
-    new Book("9780000000067", "The Red Code", "Thomas Fuchs"),
-    new Book("9780000000068", "Ghost Network", "Maria Lang"),
-    new Book("9780000000069", "Cyber Dreams", "Stefan Peters"),
-    new Book("9780000000070", "The Hidden Algorithm", "Sophie Maier"),
-    new Book("9780000000071", "Binary Storm", "Andreas Otto"),
-    new Book("9780000000072", "The Lost Signal", "Nina Frank"),
-    new Book("9780000000073", "Dark Protocol", "Julian Wolf"),
-    new Book("9780000000074", "Virtual Code", "Hannah Busch"),
-    new Book("9780000000075", "The Final Horizon", "Lukas König"),
-    new Book("9780000000076", "Silent Byte", "Clara Schmitt"),
-    new Book("9780000000077", "The Infinite System", "Tim Berg"),
-    new Book("9780000000078", "Hidden Data", "Lea Fuchs"),
-    new Book("9780000000079", "Cyber Horizon", "Paul Keller"),
-    new Book("9780000000080", "Ghost Code", "Emma Weiß"),
-    new Book("9780000000081", "Binary Path", "Jonas Ludwig"),
-    new Book("9780000000082", "The Dark Node", "Mia Peters"),
-    new Book("9780000000083", "Silent Storm", "Leon Schreiber"),
-    new Book("9780000000084", "The Final Key", "Sophia Lang"),
-    new Book("9780000000085", "Digital Maze", "Max Otto"),
-    new Book("9780000000086", "The Hidden Byte", "Lisa König"),
-    new Book("9780000000087", "Cyber Signal", "Noah Klein"),
-    new Book("9780000000088", "Ghost Horizon", "Anna Fuchs"),
-    new Book("9780000000089", "Binary Code X", "Tom Bergmann"),
-    new Book("9780000000090", "The Lost Byte", "Julia Schuster"),
-    new Book("9780000000091", "Dark System", "David König"),
-    new Book("9780000000092", "Silent Data", "Clara Busch"),
-    new Book("9780000000093", "The Infinite Node", "Jan Ludwig"),
-    new Book("9780000000094", "Cyber Key", "Marlene Otto"),
-    new Book("9780000000095", "Ghost System", "Felix Weiß"),
-    new Book("9780000000096", "Binary Signal", "Lea König"),
-    new Book("9780000000097", "The Final Protocol", "Simon Berg"),
-    new Book("9780000000098", "Hidden Horizon", "Sarah Klein"),
-    new Book("9780000000099", "Dark Byte", "Erik Otto"),
-    new Book("9780000000100", "The Last Code", "Nina Busch")
+new Book("9780000000036", "The Crystal Maze", "Ida Peters"),
+new Book("9780000000037", "Ghost Protocol", "Theo Lang"),
+new Book("9780000000038", "Fire and Code", "Helena Roth"),
+new Book("9780000000039", "The Dark Web", "Nico Sommer"),
+new Book("9780000000040", "Silent Code", "Finn Jäger"),
+new Book("9780000000041", "The Last Guardian", "Johanna Haas"),
+new Book("9780000000042", "Frozen Time", "Tobias Schuster"),
+new Book("9780000000043", "The Infinite Key", "Sarah Kern"),
+new Book("9780000000044", "Shadows Rising", "Jan Fuchs"),
+new Book("9780000000045", "The Final System", "Marlene Weiß"),
+new Book("9780000000046", "Virtual Reality", "Tom Schmitt"),
+new Book("9780000000047", "The Red Signal", "Alina Dietrich"),
+new Book("9780000000048", "Echo Chamber", "Erik Schmid"),
+new Book("9780000000049", "Binary Dreams", "Lina Conrad"),
+new Book("9780000000050", "The Lost Data", "Simon Werner"),
+new Book("9780000000051", "Cyber Storm", "Paula Voigt"),
+new Book("9780000000052", "The Hidden Node", "Robin Keller"),
+new Book("9780000000053", "Silent Network", "Julia Sauer"),
+new Book("9780000000054", "The Black Code", "Marvin Franke"),
+new Book("9780000000055", "Digital Horizon", "Lena Barth"),
+new Book("9780000000056", "The Final Byte", "Chris Ludwig"),
+new Book("9780000000057", "Neural Path", "Sven Krämer"),
+new Book("9780000000058", "The Data Stream", "Anne Beckmann"),
+new Book("9780000000059", "Lost Connection", "Marc Schreiber"),
+new Book("9780000000060", "The Code Breaker", "Tina Busch"),
+new Book("9780000000061", "Dark Signal", "Kevin Wolff"),
+new Book("9780000000062", "The Last Node", "Vanessa Arndt"),
+new Book("9780000000063", "Hidden System", "Patrick Krüger"),
+new Book("9780000000064", "The Infinite Loop 2", "Laura Weiß"),
+new Book("9780000000065", "Digital Storm", "Daniel Bergmann"),
+new Book("9780000000066", "Silent Protocol", "Julia Klein"),
+new Book("9780000000067", "The Red Code", "Thomas Fuchs"),
+new Book("9780000000068", "Ghost Network", "Maria Lang"),
+new Book("9780000000069", "Cyber Dreams", "Stefan Peters"),
+new Book("9780000000070", "The Hidden Algorithm", "Sophie Maier"),
+new Book("9780000000071", "Binary Storm", "Andreas Otto"),
+new Book("9780000000072", "The Lost Signal", "Nina Frank"),
+new Book("9780000000073", "Dark Protocol", "Julian Wolf"),
+new Book("9780000000074", "Virtual Code", "Hannah Busch"),
+new Book("9780000000075", "The Final Horizon", "Lukas König"),
+new Book("9780000000076", "Silent Byte", "Clara Schmitt"),
+new Book("9780000000077", "The Infinite System", "Tim Berg"),
+new Book("9780000000078", "Hidden Data", "Lea Fuchs"),
+new Book("9780000000079", "Cyber Horizon", "Paul Keller"),
+new Book("9780000000080", "Ghost Code", "Emma Weiß"),
+new Book("9780000000081", "Binary Path", "Jonas Ludwig"),
+new Book("9780000000082", "The Dark Node", "Mia Peters"),
+new Book("9780000000083", "Silent Storm", "Leon Schreiber"),
+new Book("9780000000084", "The Final Key", "Sophia Lang"),
+new Book("9780000000085", "Digital Maze", "Max Otto"),
+new Book("9780000000086", "The Hidden Byte", "Lisa König"),
+new Book("9780000000087", "Cyber Signal", "Noah Klein"),
+new Book("9780000000088", "Ghost Horizon", "Anna Fuchs"),
+new Book("9780000000089", "Binary Code X", "Tom Bergmann"),
+new Book("9780000000090", "The Lost Byte", "Julia Schuster"),
+new Book("9780000000091", "Dark System", "David König"),
+new Book("9780000000092", "Silent Data", "Clara Busch"),
+new Book("9780000000093", "The Infinite Node", "Jan Ludwig"),
+new Book("9780000000094", "Cyber Key", "Marlene Otto"),
+new Book("9780000000095", "Ghost System", "Felix Weiß"),
+new Book("9780000000096", "Binary Signal", "Lea König"),
+new Book("9780000000097", "The Final Protocol", "Simon Berg"),
+new Book("9780000000098", "Hidden Horizon", "Sarah Klein"),
+new Book("9780000000099", "Dark Byte", "Erik Otto"),
+new Book("9780000000100", "The Last Code", "Nina Busch")
 };
 return books;
 }*/
-}
